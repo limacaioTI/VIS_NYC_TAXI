@@ -1,0 +1,9 @@
+# Ignora QUALQUER pasta node_modules no projeto
+node_modules
+
+# Ignora a pasta de dados na raiz
+/data/
+
+# Outras coisas úteis (opcional)
+.env
+*.log

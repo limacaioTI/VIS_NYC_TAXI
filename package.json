@@ -1,0 +1,14 @@
+{
+  "name": "trabalho-1---vis",
+  "version": "1.0.0",
+  "description": "Documentação do Projeto: Análise Visual de Táxis NYC\r Projeto: Narrativa Visual sobre Táxis em NYC \r Prazo: 13/11/2025 \r Grupo: [Caio Lima, Claussio Soares, Lucca Amaral, Yuri Moura]\r Fonte de dados: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page\r 1. Objetivo Central\r Nosso objetivo é construir uma aplicação web de página única (single-page application) que carrega e processa dados brutos (.parquet) de táxis de NYC usando DuckDB e renderiza visualizações interativas usando D3.js. A análise será consolidada em um relatório PDF de 4 páginas.\r 2. Pilares Técnicos (Regras Inquebráveis)\r Visualização: 100% D3.js. Nenhuma outra biblioteca de gráficos (Chart.js, Plotly, etc.) é permitida.\r Processamento: Zero pré-processamento externo. Não podemos usar Python/Pandas para limpar dados e salvar um CSV. Toda a limpeza, filtragem e agregação deve ser feita pela nossa aplicação.\r Banco de Dados: Os arquivos .parquet originais devem ser carregados e consultados diretamente por uma instância do DuckDB.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "duckdb": "^1.4.1"
+  }
+}
