@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css">
+    <title>Análise de Gorjetas - Táxis NYC</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Análise de Gorjetas em Táxis Amarelos de NYC</h1>
+      <h2>Comparação entre 2018 e 2023</h2>
+      
+      <div id="loading" class="loading">
+        <p>Carregando dados...</p>
+      </div>
+      
+      <div id="content" class="hidden">
+        <div class="stats-container">
+          <div class="stat-card">
+            <h3>2018</h3>
+            <div id="stats-2018"></div>
+          </div>
+          <div class="stat-card">
+            <h3>2023</h3>
+            <div id="stats-2023"></div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>Quantidade de Viagens com Gorjeta</h3>
+          <div id="chart-count"></div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>Valor Médio de Gorjeta (USD)</h3>
+          <div id="chart-avg"></div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>Comparação Geral</h3>
+          <div id="chart-comparison"></div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+
