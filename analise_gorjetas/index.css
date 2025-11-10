@@ -107,7 +107,6 @@ h3 {
 }
 
 .bar {
-  fill: #667eea;
   transition: fill 0.3s;
 }
 
@@ -135,4 +134,3 @@ h3 {
   font-weight: 600;
   fill: #333;
 }
-

@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-export function criarGraficoQuantidade(containerId, data2018, data2023) {
+export function criarGraficoQuantidade(containerId, data2018, data2020, data2023) {
     const container = d3.select(`#${containerId}`);
     container.selectAll("*").remove();
 
@@ -19,11 +19,12 @@ export function criarGraficoQuantidade(containerId, data2018, data2023) {
 
     const data = [
         { ano: "2018", comGorjeta: data2018.viagens_com_gorjeta, semGorjeta: data2018.viagens_sem_gorjeta },
-        { ano: "2023", comGorjeta: data2023.viagens_com_gorjeta, semGorjeta: data2023.viagens_sem_gorjeta }
+        { ano: "2020", comGorjeta: data2020.viagens_com_gorjeta, semGorjeta: data2020.viagens_sem_gorjeta },
+        { ano: "2023", comGorjeta: data2023.viagens_com_gorjeta, semGorjeta: data2023.viagens_sem_gorjeta },
     ];
 
     const x0 = d3.scaleBand()
-        .domain(["2018", "2023"])
+        .domain(["2018", "2020", "2023"])
         .range([0, width])
         .paddingInner(0.2)
         .paddingOuter(0.1);
@@ -70,7 +71,7 @@ export function criarGraficoQuantidade(containerId, data2018, data2023) {
         .attr("height", d => height - y(d.value))
         .attr("fill", d => d.key === "comGorjeta" ? "#667eea" : "#e0e0e0")
         .attr("class", "bar")
-        .on("mouseover", function(event, d) {
+        .on("mouseover", function (event, d) {
             d3.select(this).attr("opacity", 0.7);
             const tooltip = d3.select("body").append("div")
                 .attr("class", "tooltip")
@@ -81,16 +82,16 @@ export function criarGraficoQuantidade(containerId, data2018, data2023) {
                 .style("padding", "8px")
                 .style("border-radius", "4px")
                 .style("pointer-events", "none");
-            
+
             tooltip.transition()
                 .duration(200)
                 .style("opacity", 1);
-            
+
             tooltip.html(`${d.label}<br/>${d.value.toLocaleString('pt-BR')} viagens`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 10) + "px");
         })
-        .on("mouseout", function() {
+        .on("mouseout", function () {
             d3.select(this).attr("opacity", 1);
             d3.selectAll(".tooltip").remove();
         });
@@ -162,7 +163,7 @@ export function criarGraficoQuantidade(containerId, data2018, data2023) {
         .text(d => d.label);
 }
 
-export function criarGraficoMedia(containerId, data2018, data2023) {
+export function criarGraficoMedia(containerId, data2018, data2020, data2023) {
     const container = d3.select(`#${containerId}`);
     container.selectAll("*").remove();
 
@@ -181,11 +182,12 @@ export function criarGraficoMedia(containerId, data2018, data2023) {
 
     const data = [
         { ano: "2018", media: parseFloat(data2018.media_gorjeta) || 0 },
+        { ano: "2020", media: parseFloat(data2020.media_gorjeta) || 0 },
         { ano: "2023", media: parseFloat(data2023.media_gorjeta) || 0 }
     ];
 
     const x = d3.scaleBand()
-        .domain(["2018", "2023"])
+        .domain(["2018", "2020", "2023"])
         .range([0, width])
         .padding(0.3);
 
@@ -216,7 +218,7 @@ export function criarGraficoMedia(containerId, data2018, data2023) {
         .attr("width", x.bandwidth())
         .attr("height", d => height - y(d.media))
         .attr("fill", "#667eea")
-        .on("mouseover", function(event, d) {
+        .on("mouseover", function (event, d) {
             d3.select(this).attr("opacity", 0.7);
             const tooltip = d3.select("body").append("div")
                 .attr("class", "tooltip")
@@ -227,16 +229,16 @@ export function criarGraficoMedia(containerId, data2018, data2023) {
                 .style("padding", "8px")
                 .style("border-radius", "4px")
                 .style("pointer-events", "none");
-            
+
             tooltip.transition()
                 .duration(200)
                 .style("opacity", 1);
-            
+
             tooltip.html(`Ano: ${d.ano}<br/>Média: $${d.media.toFixed(2)}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 10) + "px");
         })
-        .on("mouseout", function() {
+        .on("mouseout", function () {
             d3.select(this).attr("opacity", 1);
             d3.selectAll(".tooltip").remove();
         });
@@ -277,7 +279,7 @@ export function criarGraficoMedia(containerId, data2018, data2023) {
         .text("Valor Médio (USD)");
 }
 
-export function criarGraficoComparacao(containerId, data2018, data2023) {
+export function criarGraficoComparacao(containerId, data2018, data2020, data2023) {
     const container = d3.select(`#${containerId}`);
     container.selectAll("*").remove();
 
@@ -295,15 +297,17 @@ export function criarGraficoComparacao(containerId, data2018, data2023) {
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
     const percentual2018 = (data2018.viagens_com_gorjeta / data2018.total_viagens) * 100;
+    const percentual2020 = (data2020.viagens_com_gorjeta / data2020.total_viagens) * 100;
     const percentual2023 = (data2023.viagens_com_gorjeta / data2023.total_viagens) * 100;
 
     const data = [
         { ano: "2018", percentual: percentual2018, media: parseFloat(data2018.media_gorjeta) || 0 },
+        { ano: "2020", percentual: percentual2020, media: parseFloat(data2020.media_gorjeta) || 0 },
         { ano: "2023", percentual: percentual2023, media: parseFloat(data2023.media_gorjeta) || 0 }
     ];
 
     const x = d3.scaleBand()
-        .domain(["2018", "2023"])
+        .domain(["2018", "2020", "2023"])
         .range([0, width])
         .padding(0.3);
 
@@ -384,7 +388,7 @@ export function criarGraficoComparacao(containerId, data2018, data2023) {
         .text("Percentual de Viagens com Gorjeta");
 }
 
-export function criarEstatisticas(containerId, data, ano) {
+export function criarEstatisticas(containerId, data) {
     const container = d3.select(`#${containerId}`);
     container.selectAll("*").remove();
 
@@ -402,11 +406,11 @@ export function criarEstatisticas(containerId, data, ano) {
     stats.forEach(stat => {
         const statDiv = container.append("div")
             .attr("class", "stat-item");
-        
+
         statDiv.append("div")
             .attr("class", "stat-label")
             .text(stat.label);
-        
+
         statDiv.append("div")
             .attr("class", "stat-value")
             .text(stat.value);
