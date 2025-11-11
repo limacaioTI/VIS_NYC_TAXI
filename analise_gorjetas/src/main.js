@@ -1,5 +1,5 @@
 import { Taxi } from './taxi';
-import { criarGraficoQuantidade, criarGraficoMedia, criarGraficoComparacao, criarEstatisticas } from './visualizacoes';
+import { criarGraficoQuantidade, criarGraficoMedia, criarGraficoComparacao, criarEstatisticas, criarSerieMensalMediaGorjeta, criarGraficoPizzaPeriodoDia } from './visualizacoes';
 
 window.onload = async () => {
     const loadingDiv = document.querySelector("#loading");
@@ -24,6 +24,20 @@ window.onload = async () => {
         console.log("Dados de 2018:", data2018);
         console.log("Dados de 2023:", data2023);
 
+        console.log("Carregando séries mensais...");
+        const [series2018, series2020, series2023] = await Promise.all([
+            taxi.getMonthlyTipSeries(2018, 12),
+            taxi.getMonthlyTipSeries(2020, 12),
+            taxi.getMonthlyTipSeries(2023, 12),
+        ]);
+
+        console.log("Carregando dados por período do dia...");
+        const [periodo2018, periodo2020, periodo2023] = await Promise.all([
+            taxi.getTipAnalysisByPeriodoDia(2018, 12),
+            taxi.getTipAnalysisByPeriodoDia(2020, 12),
+            taxi.getTipAnalysisByPeriodoDia(2023, 12),
+        ]);
+
         // Esconder loading e mostrar conteúdo
         loadingDiv.classList.add("hidden");
         contentDiv.classList.remove("hidden");
@@ -37,6 +51,17 @@ window.onload = async () => {
         criarGraficoQuantidade("chart-count", data2018, data2020, data2023);
         criarGraficoMedia("chart-avg", data2018, data2020, data2023);
         criarGraficoComparacao("chart-comparison", data2018, data2020, data2023);
+
+        // Séries mensais (linha)
+        const seriesMapMedia = {
+            "2018": series2018.map(d => ({ mes: d.mes, media_gorjeta: d.media_gorjeta })),
+            "2020": series2020.map(d => ({ mes: d.mes, media_gorjeta: d.media_gorjeta })),
+            "2023": series2023.map(d => ({ mes: d.mes, media_gorjeta: d.media_gorjeta })),
+        };
+        criarSerieMensalMediaGorjeta("chart-monthly-avg", seriesMapMedia);
+
+        // Gráfico de pizza por período do dia
+        criarGraficoPizzaPeriodoDia("chart-pizza-periodo", periodo2018, periodo2020, periodo2023);
 
         console.log("Visualizações criadas com sucesso!");
 
