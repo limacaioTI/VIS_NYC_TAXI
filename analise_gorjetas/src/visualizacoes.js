@@ -39,7 +39,6 @@ export function criarGraficoQuantidade(containerId, data2018, data2020, data2023
         .nice()
         .range([height, 0]);
 
-    // Grid lines
     g.selectAll(".grid-line")
         .data(y.ticks(10))
         .enter()
@@ -50,7 +49,6 @@ export function criarGraficoQuantidade(containerId, data2018, data2020, data2023
         .attr("y1", d => y(d))
         .attr("y2", d => y(d));
 
-    // Bars
     const anos = g.selectAll(".ano")
         .data(data)
         .enter()
@@ -96,7 +94,6 @@ export function criarGraficoQuantidade(containerId, data2018, data2020, data2023
             d3.selectAll(".tooltip").remove();
         });
 
-    // Value labels
     anos.selectAll(".value-label")
         .data(d => [
             { key: "comGorjeta", value: d.comGorjeta },
@@ -110,7 +107,6 @@ export function criarGraficoQuantidade(containerId, data2018, data2020, data2023
         .attr("text-anchor", "middle")
         .text(d => d.value > 0 ? (d.value / 1000000).toFixed(1) + "M" : "");
 
-    // X axis
     g.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x0))
@@ -118,13 +114,11 @@ export function criarGraficoQuantidade(containerId, data2018, data2020, data2023
         .style("font-size", "14px")
         .style("font-weight", "600");
 
-    // Y axis
     g.append("g")
         .call(d3.axisLeft(y).tickFormat(d => (d / 1000000).toFixed(1) + "M"))
         .selectAll("text")
         .style("font-size", "12px");
 
-    // Y axis label
     g.append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
@@ -134,7 +128,6 @@ export function criarGraficoQuantidade(containerId, data2018, data2020, data2023
         .style("text-anchor", "middle")
         .text("Quantidade de Viagens");
 
-    // Legend
     const legend = g.append("g")
         .attr("transform", `translate(${width - 200}, 20)`);
 
@@ -196,7 +189,6 @@ export function criarGraficoMedia(containerId, data2018, data2020, data2023) {
         .nice()
         .range([height, 0]);
 
-    // Grid lines
     g.selectAll(".grid-line")
         .data(y.ticks(10))
         .enter()
@@ -207,7 +199,6 @@ export function criarGraficoMedia(containerId, data2018, data2020, data2023) {
         .attr("y1", d => y(d))
         .attr("y2", d => y(d));
 
-    // Bars
     g.selectAll(".bar")
         .data(data)
         .enter()
@@ -243,7 +234,6 @@ export function criarGraficoMedia(containerId, data2018, data2020, data2023) {
             d3.selectAll(".tooltip").remove();
         });
 
-    // Value labels
     g.selectAll(".value-label")
         .data(data)
         .enter()
@@ -254,7 +244,6 @@ export function criarGraficoMedia(containerId, data2018, data2020, data2023) {
         .attr("text-anchor", "middle")
         .text(d => `$${d.media.toFixed(2)}`);
 
-    // X axis
     g.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x))
@@ -262,13 +251,10 @@ export function criarGraficoMedia(containerId, data2018, data2020, data2023) {
         .style("font-size", "14px")
         .style("font-weight", "600");
 
-    // Y axis
     g.append("g")
         .call(d3.axisLeft(y).tickFormat(d => `$${d.toFixed(2)}`))
         .selectAll("text")
         .style("font-size", "12px");
-
-    // Y axis label
     g.append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
@@ -319,7 +305,6 @@ export function criarGraficoComparacao(containerId, data2018, data2020, data2023
         .domain([0, d3.max(data, d => d.media) * 1.2])
         .range([height, 0]);
 
-    // Grid lines
     g.selectAll(".grid-line")
         .data(yPercentual.ticks(10))
         .enter()
@@ -330,7 +315,6 @@ export function criarGraficoComparacao(containerId, data2018, data2020, data2023
         .attr("y1", d => yPercentual(d))
         .attr("y2", d => yPercentual(d));
 
-    // Bars for percentage
     g.selectAll(".bar-percent")
         .data(data)
         .enter()
@@ -341,9 +325,31 @@ export function criarGraficoComparacao(containerId, data2018, data2020, data2023
         .attr("width", x.bandwidth())
         .attr("height", d => height - yPercentual(d.percentual))
         .attr("fill", "#667eea")
-        .attr("opacity", 0.6);
+        .on("mouseover", function (event, d) {
+        d3.select(this).attr("opacity", 0.7);
 
-    // Percentage labels
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0)
+            .style("position", "absolute")
+            .style("background", "rgba(0,0,0,0.8)")
+            .style("color", "white")
+            .style("padding", "8px")
+            .style("border-radius", "4px")
+            .style("pointer-events", "none");
+
+        tooltip.transition()
+            .duration(200)
+            .style("opacity", 1);
+        tooltip.html(`Ano: ${d.ano}<br/>Percentual: ${d.percentual.toFixed(1)}%`)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px");
+    })
+    .on("mouseout", function () {
+        d3.select(this).attr("opacity", 1);
+        d3.selectAll(".tooltip").remove();
+    });
+
     g.selectAll(".percent-label")
         .data(data)
         .enter()
@@ -354,21 +360,17 @@ export function criarGraficoComparacao(containerId, data2018, data2020, data2023
         .attr("text-anchor", "middle")
         .text(d => `${d.percentual.toFixed(1)}%`);
 
-    // X axis
     g.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x))
         .selectAll("text")
         .style("font-size", "14px")
         .style("font-weight", "600");
-
-    // Y axis (percentage)
     g.append("g")
         .call(d3.axisLeft(yPercentual).tickFormat(d => `${d}%`))
         .selectAll("text")
         .style("font-size", "12px");
 
-    // Y axis label
     g.append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
@@ -377,8 +379,6 @@ export function criarGraficoComparacao(containerId, data2018, data2020, data2023
         .attr("dy", "1em")
         .style("text-anchor", "middle")
         .text("Percentual de Viagens com Gorjeta (%)");
-
-    // Title
     g.append("text")
         .attr("x", width / 2)
         .attr("y", -10)
@@ -418,7 +418,6 @@ export function criarEstatisticas(containerId, data) {
 }
 
 export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
-    // seriesMap: { "2018": [{mes, media_gorjeta}], "2020": [...], "2023": [...] }
     const container = d3.select(`#${containerId}`);
     container.selectAll("*").remove();
 
@@ -449,7 +448,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
         .nice()
         .range([height, 0]);
 
-    // Grid
     g.selectAll(".grid-line")
         .data(y.ticks(10))
         .enter()
@@ -472,7 +470,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
         .y(d => y(d.media_gorjeta || 0))
         .curve(d3.curveMonotoneX);
 
-    // Criar tooltip
     d3.selectAll(`.tooltip-${containerId}`).remove();
     const tooltip = d3.select("body").append("div")
         .attr("class", `tooltip tooltip-${containerId}`)
@@ -487,7 +484,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
         .style("box-shadow", "0 2px 8px rgba(0,0,0,0.3)")
         .style("z-index", "1000");
 
-    // Armazenar todos os dados para facilitar acesso
     const allDataPoints = [];
     anos.forEach(ano => {
         seriesMap[ano].forEach(d => {
@@ -501,11 +497,9 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
         });
     });
 
-    // Criar as linhas para cada ano
     anos.forEach(ano => {
         const data = seriesMap[ano];
-        
-        // Linha
+
         g.append("path")
             .datum(data)
             .attr("fill", "none")
@@ -515,7 +509,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
             .attr("class", `line-${ano}`);
     });
 
-    // Criar pontos visíveis (sem eventos - apenas visual)
     anos.forEach(ano => {
         const data = seriesMap[ano];
         g.selectAll(`.dot-${ano}`)
@@ -529,10 +522,9 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
             .attr("stroke", "white")
             .attr("stroke-width", 2)
             .attr("class", `dot-${ano}`)
-            .style("pointer-events", "none"); // Pontos não capturam eventos
+            .style("pointer-events", "none"); 
     });
 
-    // Criar círculo de destaque (que aparece quando passar o mouse)
     const highlightCircle = g.append("circle")
         .attr("r", 6)
         .attr("fill", "none")
@@ -541,7 +533,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
         .style("display", "none")
         .style("pointer-events", "none");
 
-    // Criar área invisível sobre todo o gráfico para capturar movimento do mouse
     const overlay = g.append("rect")
         .attr("width", width)
         .attr("height", height)
@@ -558,10 +549,8 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
             highlightCircle.style("display", "none");
         })
         .on("mousemove", function(event) {
-            // Obter posição do mouse no gráfico
             const [mouseX, mouseY] = d3.pointer(event, this);
-            
-            // Encontrar o ponto mais próximo
+
             let closestPoint = null;
             let minDistance = Infinity;
             
@@ -575,15 +564,12 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
                 }
             });
             
-            if (closestPoint && minDistance < 50) { // Limite de 50px de distância
-                // Atualizar posição do círculo de destaque
+            if (closestPoint && minDistance < 50) { 
                 highlightCircle
                     .attr("cx", closestPoint.x)
                     .attr("cy", closestPoint.y)
                     .attr("stroke", color(closestPoint.ano))
                     .style("display", null);
-                
-                // Mostrar tooltip
                 const mesNome = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
                                 "Jul", "Ago", "Set", "Out", "Nov", "Dez"][closestPoint.mes - 1];
                 const valor = closestPoint.valor.toFixed(2);
@@ -596,7 +582,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY - 10) + "px");
             } else {
-                // Se muito longe de qualquer ponto, esconder
                 highlightCircle.style("display", "none");
                 tooltip.transition()
                     .duration(200)
@@ -604,20 +589,17 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
             }
         });
 
-    // Eixo X
     g.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(m => String(m).padStart(2, '0')))
         .selectAll("text")
         .style("font-size", "12px");
 
-    // Eixo Y
     g.append("g")
         .call(d3.axisLeft(y).tickFormat(d => `$${d.toFixed(2)}`))
         .selectAll("text")
         .style("font-size", "12px");
 
-    // Rótulo do eixo Y
     g.append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
@@ -628,7 +610,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
         .style("font-size", "14px")
         .text("Média de Gorjeta (USD)");
 
-    // Rótulo do eixo X
     g.append("text")
         .attr("class", "axis-label")
         .attr("transform", `translate(${width / 2}, ${height + margin.bottom - 10})`)
@@ -636,7 +617,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
         .style("font-size", "14px")
         .text("Mês");
 
-    // Legenda
     const legend = g.append("g")
         .attr("transform", `translate(${width + 10}, 20)`);
 
@@ -659,7 +639,6 @@ export function criarSerieMensalMediaGorjeta(containerId, seriesMap) {
 }
 
 export function criarSerieMensalTipRate(containerId, seriesMap, usarMediana = false) {
-    // seriesMap: { "2018": [{mes, tip_rate_medio, tip_rate_mediano}], ... }
     const container = d3.select(`#${containerId}`);
     container.selectAll("*").remove();
 
@@ -691,7 +670,6 @@ export function criarSerieMensalTipRate(containerId, seriesMap, usarMediana = fa
         .nice()
         .range([height, 0]);
 
-    // Grid
     g.selectAll(".grid-line")
         .data(y.ticks(10))
         .enter()
@@ -710,7 +688,6 @@ export function criarSerieMensalTipRate(containerId, seriesMap, usarMediana = fa
         .x(d => x(d.mes))
         .y(d => y(pick(d)));
 
-    // Remover tooltips existentes e criar um novo
     d3.selectAll(`.tooltip-${containerId}`).remove();
     const tooltip = d3.select("body").append("div")
         .attr("class", `tooltip tooltip-${containerId}`)
@@ -778,16 +755,13 @@ export function criarSerieMensalTipRate(containerId, seriesMap, usarMediana = fa
             });
     });
 
-    // Eixo X
     g.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(m => String(m).padStart(2, '0')));
 
-    // Eixo Y
     g.append("g")
         .call(d3.axisLeft(y).tickFormat(d => `${(d * 100).toFixed(0)}%`));
 
-    // Rótulos
     g.append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
@@ -797,7 +771,6 @@ export function criarSerieMensalTipRate(containerId, seriesMap, usarMediana = fa
         .style("text-anchor", "middle")
         .text(usarMediana ? "Tip Rate Mediano (%)" : "Tip Rate Médio (%)");
 
-    // Legenda
     const legend = g.append("g")
         .attr("transform", `translate(${width + 10}, 0)`);
 
@@ -809,20 +782,19 @@ export function criarSerieMensalTipRate(containerId, seriesMap, usarMediana = fa
 }
 
 export function criarGraficoPizzaPeriodoDia(containerId, data2018, data2020, data2023) {
-    // data é um objeto { madrugada: X, manha: Y, tarde: Z, noite: W }
+
     const container = d3.select(`#${containerId}`);
     container.selectAll("*").remove();
 
     const width = 900;
     const height = 450;
-    const radius = 120; // Tamanho fixo para cada pizza
+    const radius = 120; 
 
     const svg = container
         .append("svg")
         .attr("width", width)
         .attr("height", height);
 
-    // Criar tooltip
     d3.selectAll(`.tooltip-${containerId}`).remove();
     const tooltip = d3.select("body").append("div")
         .attr("class", `tooltip tooltip-${containerId}`)
@@ -866,7 +838,6 @@ export function criarGraficoPizzaPeriodoDia(containerId, data2018, data2020, dat
         const g = svg.append("g")
             .attr("transform", `translate(${(index * width / 3) + width / 6}, ${height / 2})`);
 
-        // Preparar dados
         const dados = periodos.map(p => ({
             periodo: p.key,
             label: p.label,
@@ -877,7 +848,6 @@ export function criarGraficoPizzaPeriodoDia(containerId, data2018, data2020, dat
 
         const total = d3.sum(dados, d => d.value);
 
-        // Criar arcos
         const paths = g.selectAll("path")
             .data(pie(dados))
             .enter()
@@ -919,7 +889,6 @@ export function criarGraficoPizzaPeriodoDia(containerId, data2018, data2020, dat
                     .style("opacity", 0);
             });
 
-        // Adicionar labels de porcentagem nas fatias grandes
         const labels = g.selectAll("text")
             .data(pie(dados))
             .enter()
@@ -935,7 +904,6 @@ export function criarGraficoPizzaPeriodoDia(containerId, data2018, data2020, dat
                 return percent > 5 ? `${percent.toFixed(1)}%` : "";
             });
 
-        // Título do gráfico
         g.append("text")
             .attr("y", -radius - 30)
             .attr("text-anchor", "middle")
@@ -943,7 +911,6 @@ export function criarGraficoPizzaPeriodoDia(containerId, data2018, data2020, dat
             .style("font-weight", "600")
             .text(item.ano);
 
-        // Total de viagens
         g.append("text")
             .attr("y", -radius - 10)
             .attr("text-anchor", "middle")
@@ -952,7 +919,6 @@ export function criarGraficoPizzaPeriodoDia(containerId, data2018, data2020, dat
             .text(`${total.toLocaleString('pt-BR')} viagens`);
     });
 
-    // Legenda geral (abaixo dos gráficos)
     const legend = svg.append("g")
         .attr("transform", `translate(${width / 2}, ${height - 60})`);
 
